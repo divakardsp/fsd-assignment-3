@@ -1,91 +1,79 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 // Models
-export type Product = {
+export type User = {
   id: string;
   name: string;
-  price: number;
-  image: string;
-  description: string;
+  email: string;
 };
 
-export type CartItem = {
-  product: Product;
-  quantity: number;
+export type Note = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
 };
 
 type StoreContextType = {
-  cart: CartItem[];
-  wishlist: Product[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  toggleWishlist: (product: Product) => void;
-  isInWishlist: (productId: string) => boolean;
-  cartTotal: number;
+  user: User | null;
+  notes: Note[];
+  login: (email: string, pass: string) => void;
+  signup: (name: string, email: string, pass: string) => void;
+  logout: () => void;
+  addNote: (title: string, content: string) => void;
+  deleteNote: (id: string) => void;
 };
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [wishlist, setWishlist] = useState<Product[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [notes, setNotes] = useState<Note[]>([]);
 
-  const addToCart = (product: Product) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.product.id === product.id);
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      return [...prevCart, { product, quantity: 1 }];
-    });
-  };
-
-  const removeFromCart = (productId: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  };
-
-  const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
+  // Mock Authentication Methods
+  const login = (email: string, pass: string) => {
+    // In a real app we would validate credentials here
+    if (email && pass) {
+       setUser({ id: '1', name: 'Divyansh Sharma', email });
     }
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
-    );
   };
 
-  const toggleWishlist = (product: Product) => {
-    setWishlist((prevWishlist) => {
-      const exists = prevWishlist.some((p) => p.id === product.id);
-      if (exists) {
-        return prevWishlist.filter((p) => p.id !== product.id);
-      }
-      return [...prevWishlist, product];
-    });
+  const signup = (name: string, email: string, pass: string) => {
+    if (name && email && pass) {
+       setUser({ id: '1', name, email });
+    }
   };
 
-  const isInWishlist = (productId: string) => {
-    return wishlist.some((p) => p.id === productId);
+  const logout = () => {
+    setUser(null);
+    setNotes([]); // Clear notes on logout
   };
 
-  const cartTotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  // Mock Notes CRUD Methods
+  const addNote = (title: string, content: string) => {
+    const newNote: Note = {
+      id: Date.now().toString(),
+      title,
+      content,
+      createdAt: new Date().toISOString(),
+    };
+    setNotes((prev) => [newNote, ...prev]);
+  };
+
+  const deleteNote = (id: string) => {
+    setNotes((prev) => prev.filter((note) => note.id !== id));
+  };
 
   return (
     <StoreContext.Provider
       value={{
-        cart,
-        wishlist,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        toggleWishlist,
-        isInWishlist,
-        cartTotal,
+        user,
+        notes,
+        login,
+        signup,
+        logout,
+        addNote,
+        deleteNote,
       }}
     >
       {children}

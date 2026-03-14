@@ -1,64 +1,41 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useStore } from '@/context/store-context';
 
 export default function ProfileScreen() {
+  const { user, logout } = useStore();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <Image
-            source={{ uri: 'https://i.pravatar.cc/300' }}
-            style={styles.avatar}
-          />
-          <Text style={styles.name}>Divyansh Sharma</Text>
-          <Text style={styles.email}>divyansh@example.com</Text>
+          <View style={styles.avatarPlaceholder}>
+             <Ionicons name="person" size={50} color="#888" />
+          </View>
+          <Text style={styles.name}>{user?.name}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account Settings</Text>
+          <Text style={styles.sectionTitle}>Account Data</Text>
+          <View style={styles.menuItem}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="shield-checkmark-outline" size={24} color="#333" />
+              <Text style={styles.menuItemText}>Account Verified</Text>
+            </View>
+            <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+          </View>
           <TouchableOpacity style={styles.menuItem}>
             <View style={styles.menuItemLeft}>
-              <Ionicons name="person-outline" size={24} color="#333" />
-              <Text style={styles.menuItemText}>Personal Information</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemLeft}>
-              <Ionicons name="location-outline" size={24} color="#333" />
-              <Text style={styles.menuItemText}>Shipping Addresses</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemLeft}>
-              <Ionicons name="card-outline" size={24} color="#333" />
-              <Text style={styles.menuItemText}>Payment Methods</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Orders</Text>
-           <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemLeft}>
-              <Ionicons name="cube-outline" size={24} color="#333" />
-              <Text style={styles.menuItemText}>My Orders</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
-           <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuItemLeft}>
-              <Ionicons name="refresh-outline" size={24} color="#333" />
-              <Text style={styles.menuItemText}>Returns & Refunds</Text>
+              <Ionicons name="cloud-upload-outline" size={24} color="#333" />
+              <Text style={styles.menuItemText}>Backup Settings</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
         </View>
         
-        <TouchableOpacity style={styles.logoutBtn}>
+        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
             <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -78,10 +55,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#eee',
   },
-  avatar: {
+  avatarPlaceholder: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    backgroundColor: '#eee',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 16,
     borderWidth: 3,
     borderColor: '#fff',
